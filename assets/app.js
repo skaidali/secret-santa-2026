@@ -110,7 +110,7 @@ async function handleRegister(event) {
     if (!name || !password) return;
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Chiffrement et envoi en cours...';
+    submitBtn.textContent = 'Enregistrement...';
 
     try {
         // 1. Génération de la paire de clés asymétriques ECDH P-256
@@ -163,8 +163,8 @@ async function handleRegister(event) {
         const actionBox = document.getElementById('register-action');
         actionBox.hidden = false;
         actionBox.innerHTML = `
-            <p><strong>Inscription confirmée pour ${name}.</strong></p>
-            <p style="margin-top:0.4rem;">Votre clé publique a été enregistrée. Conservez précieusement votre mot de passe : le tirage se déclenchera automatiquement dès que tous les participants seront inscrits.</p>
+    <p><strong>C'est noté, ${name}.</strong></p>
+    <p style="margin-top:0.4rem;">Gardez bien votre mot de passe en tête : vous en aurez besoin pour voir à qui vous offrez un cadeau dès que le tirage sera lancé.</p>
         `;
 
         document.getElementById('form-register').reset();
@@ -173,7 +173,7 @@ async function handleRegister(event) {
         alert('Impossible d\'enregistrer l\'inscription. Vérifiez votre connexion internet et réessayez.');
     } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Générer mon accès';
+        submitBtn.textContent = 'Valider mon inscription';
     }
 }
 

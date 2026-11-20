@@ -1,4 +1,4 @@
-# Secret Santa — Protocole Zero-Knowledge sur GitHub Pages
+# Secret Santa
 
 Application web statique et open source permettant d'organiser un Secret Santa sans serveur tiers, sans base de données et sans création de compte pour les participants.
 
