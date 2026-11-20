@@ -1,7 +1,6 @@
 const REPO_CONFIG = (() => {
     const host = window.location.hostname;
     const pathParts = window.location.pathname.split('/').filter(Boolean);
-    // Détection automatique sur GitHub Pages (user.github.io/repo)
     if (host.endsWith('github.io')) {
         return {
             owner: host.split('.')[0],
@@ -9,11 +8,13 @@ const REPO_CONFIG = (() => {
         };
     }
     // Fallback pour les tests en local
-    return { owner: 'TON-PSEUDO-GITHUB', repo: 'secret-santa' };
+    return { owner: 'skaidali', repo: 'secret-santa' };
 })();
 
-const API_BASE = `https://api.github.com/repos/${REPO_CONFIG.owner}/${REPO_CONFIG.repo}`;
 const REPO_URL = `https://github.com/${REPO_CONFIG.owner}/${REPO_CONFIG.repo}`;
+// Canal ntfy.sh unique et automatique basé sur le propriétaire et le nom du dépôt
+const NTFY_TOPIC = `ss-zk-${REPO_CONFIG.owner}-${REPO_CONFIG.repo}`.toLowerCase().replace(/[^a-z0-9-]/g, '');
+const NTFY_URL = `https://ntfy.sh/${NTFY_TOPIC}`;
 
 let drawData = null;
 
@@ -27,7 +28,7 @@ async function init() {
     try {
         const res = await fetch(`tirage.json?v=${Date.now()}`);
         if (!res.ok) throw new Error('Draw not published yet');
-        
+
         drawData = await res.json();
         showLoginView(Object.keys(drawData));
     } catch {
@@ -44,7 +45,7 @@ function showRegisterView() {
 function showLoginView(participants) {
     document.getElementById('view-login').hidden = false;
     const select = document.getElementById('login-name');
-    
+
     select.innerHTML = '<option value="" disabled selected>Sélectionnez votre nom</option>';
     participants.sort((a, b) => a.localeCompare(b)).forEach((name) => {
         const opt = document.createElement('option');
@@ -61,13 +62,27 @@ async function loadCurrentRoster() {
     const countEl = document.getElementById('roster-count');
 
     try {
-        const res = await fetch(`${API_BASE}/issues?state=open&per_page=100`);
+        const res = await fetch(`${NTFY_URL}/json?poll=1&since=all`);
         if (!res.ok) throw new Error();
-        const issues = await res.json();
+        const text = await res.text();
 
-        const names = issues
-            .filter((issue) => issue.title.startsWith('[INSCRIPTION]'))
-            .map((issue) => issue.title.replace('[INSCRIPTION]', '').trim());
+        const lines = text.trim().split('\n').filter(Boolean);
+        const seen = new Set();
+        const names = [];
+
+        for (const line of lines) {
+            try {
+                const msg = JSON.parse(line);
+                if (msg.event !== 'message' || !msg.message) continue;
+                const payload = JSON.parse(decodeURIComponent(escape(atob(msg.message))));
+                if (payload.nom && !seen.has(payload.nom.toLowerCase())) {
+                    seen.add(payload.nom.toLowerCase());
+                    names.push(payload.nom);
+                }
+            } catch {
+                // Ignore les messages malformés
+            }
+        }
 
         countEl.textContent = names.length;
 
@@ -83,67 +98,83 @@ async function loadCurrentRoster() {
             listEl.appendChild(li);
         });
     } catch {
-        listEl.innerHTML = '<li class="muted">Liste indisponible hors ligne.</li>';
+        listEl.innerHTML = '<li class="muted">Liste en attente de synchronisation.</li>';
     }
 }
 
 async function handleRegister(event) {
     event.preventDefault();
+    const submitBtn = event.target.querySelector('button[type="submit"]');
     const name = document.getElementById('reg-name').value.trim();
     const password = document.getElementById('reg-pass').value;
     if (!name || !password) return;
 
-    // 1. Génération de la paire de clés asymétriques ECDH P-256
-    const keyPair = await crypto.subtle.generateKey(
-        { name: 'ECDH', namedCurve: 'P-256' },
-        true,
-        ['deriveKey']
-    );
-    const pubRaw = await crypto.subtle.exportKey('raw', keyPair.publicKey);
-    const privJwk = await crypto.subtle.exportKey('jwk', keyPair.privateKey);
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Chiffrement et envoi en cours...';
 
-    // 2. Chiffrement symétrique de la clé privée avec le mot de passe (PBKDF2 + AES-GCM)
-    const enc = new TextEncoder();
-    const salt = crypto.getRandomValues(new Uint8Array(16));
-    const iv = crypto.getRandomValues(new Uint8Array(12));
+    try {
+        // 1. Génération de la paire de clés asymétriques ECDH P-256
+        const keyPair = await crypto.subtle.generateKey(
+            { name: 'ECDH', namedCurve: 'P-256' },
+            true,
+            ['deriveKey']
+        );
+        const pubRaw = await crypto.subtle.exportKey('raw', keyPair.publicKey);
+        const privJwk = await crypto.subtle.exportKey('jwk', keyPair.privateKey);
 
-    const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
-    const aesKey = await crypto.subtle.deriveKey(
-        { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
-        keyMaterial,
-        { name: 'AES-GCM', length: 256 },
-        false,
-        ['encrypt']
-    );
+        // 2. Chiffrement de la clé privée avec le mot de passe personnel
+        const enc = new TextEncoder();
+        const salt = crypto.getRandomValues(new Uint8Array(16));
+        const iv = crypto.getRandomValues(new Uint8Array(12));
 
-    const encryptedPriv = await crypto.subtle.encrypt(
-        { name: 'AES-GCM', iv },
-        aesKey,
-        enc.encode(JSON.stringify(privJwk))
-    );
+        const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+        const aesKey = await crypto.subtle.deriveKey(
+            { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+            keyMaterial,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['encrypt']
+        );
 
-    // 3. Encodage du jeton public
-    const payload = JSON.stringify({
-        nom: name,
-        pub: toB64(pubRaw),
-        s: toB64(salt),
-        iv: toB64(iv),
-        priv: toB64(encryptedPriv)
-    });
+        const encryptedPriv = await crypto.subtle.encrypt(
+            { name: 'AES-GCM', iv },
+            aesKey,
+            enc.encode(JSON.stringify(privJwk))
+        );
 
-    const token = btoa(unescape(encodeURIComponent(payload)));
-    const issueTitle = encodeURIComponent(`[INSCRIPTION] ${name}`);
-    const issueBody = encodeURIComponent(
-        `Cliquez sur **Create** ci-dessous pour valider votre inscription au Secret Santa.\n\n\`\`\`json\n${token}\n\`\`\``
-    );
+        // 3. Création du jeton public et envoi direct sur ntfy.sh
+        const payload = JSON.stringify({
+            nom: name,
+            pub: toB64(pubRaw),
+            s: toB64(salt),
+            iv: toB64(iv),
+            priv: toB64(encryptedPriv)
+        });
 
-    const issueUrl = `${REPO_URL}/issues/new?title=${issueTitle}&body=${issueBody}`;
-    const actionBox = document.getElementById('register-action');
-    actionBox.hidden = false;
-    actionBox.innerHTML = `
-        <p>Votre clé cryptographique est prête. Cliquez sur le bouton ci-dessous puis validez l'ouverture du ticket sur GitHub :</p>
-        <a href="${issueUrl}" target="_blank" rel="noopener" class="btn btn-github">Finaliser l'inscription sur GitHub</a>
-    `;
+        const token = btoa(unescape(encodeURIComponent(payload)));
+
+        const response = await fetch(NTFY_URL, {
+            method: 'POST',
+            body: token
+        });
+
+        if (!response.ok) throw new Error('Erreur réseau lors de l\'inscription');
+
+        const actionBox = document.getElementById('register-action');
+        actionBox.hidden = false;
+        actionBox.innerHTML = `
+            <p><strong>Inscription confirmée pour ${name}.</strong></p>
+            <p style="margin-top:0.4rem;">Votre clé publique a été enregistrée. Conservez précieusement votre mot de passe : le tirage se déclenchera automatiquement dès que tous les participants seront inscrits.</p>
+        `;
+
+        document.getElementById('form-register').reset();
+        await loadCurrentRoster();
+    } catch (err) {
+        alert('Impossible d\'enregistrer l\'inscription. Vérifiez votre connexion internet et réessayez.');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Générer mon accès';
+    }
 }
 
 async function handleLogin(event) {

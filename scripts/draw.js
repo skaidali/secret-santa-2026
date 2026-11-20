@@ -7,48 +7,50 @@ async function run() {
         return;
     }
 
-    const repo = process.env.GITHUB_REPOSITORY;
-    const token = process.env.GITHUB_TOKEN;
+    const repo = process.env.GITHUB_REPOSITORY; // format "owner/repo"
     const eventName = process.env.GITHUB_EVENT_NAME;
     const expectedCount = parseInt(process.env.NB_PARTICIPANTS || '0', 10);
 
-    const headers = {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/vnd.github+json',
-        'User-Agent': 'Secret-Santa-Bot'
-    };
+    // Génère exactement le même nom de canal ntfy.sh que assets/app.js
+    const [owner, repoName] = repo.split('/');
+    const topic = `ss-zk-${owner}-${repoName}`.toLowerCase().replace(/[^a-z0-9-]/g, '');
+    const ntfyUrl = `https://ntfy.sh/${topic}/json?poll=1&since=all`;
 
-    const res = await fetch(`https://api.github.com/repos/${repo}/issues?state=open&per_page=100`, { headers });
-    if (!res.ok) throw new Error(`Erreur API GitHub: ${res.status}`);
-    const issues = await res.json();
+    console.log(`Lecture des inscriptions sur le canal : ${topic}`);
 
+    const res = await fetch(ntfyUrl);
+    if (!res.ok) throw new Error(`Erreur lors de la lecture sur ntfy.sh : ${res.status}`);
+    const text = await res.text();
+
+    const lines = text.trim().split('\n').filter(Boolean);
     const participants = [];
     const seenNames = new Set();
 
-    for (const issue of issues) {
-        if (!issue.title.startsWith('[INSCRIPTION]')) continue;
-        const match = issue.body?.match(/```json\s*([\s\S]*?)\s*```/);
-        if (!match) continue;
-
+    for (const line of lines) {
         try {
-            const parsed = JSON.parse(Buffer.from(match[1].trim(), 'base64').toString('utf8'));
-            const key = parsed.nom.toLowerCase();
+            const msg = JSON.parse(line);
+            if (msg.event !== 'message' || !msg.message) continue;
+
+            const parsed = JSON.parse(Buffer.from(msg.message, 'base64').toString('utf8'));
+            if (!parsed.nom || !parsed.pub || !parsed.priv) continue;
+
+            const key = parsed.nom.trim().toLowerCase();
             if (!seenNames.has(key)) {
                 seenNames.add(key);
-                participants.push({ ...parsed, issueNumber: issue.number });
+                participants.push(parsed);
             }
         } catch {
-            console.warn(`Issue #${issue.number} ignorée : jeton invalide.`);
+            // Ignore les messages invalides
         }
     }
 
-    console.log(`Inscriptions valides : ${participants.length} / ${expectedCount}`);
+    console.log(`Inscriptions valides trouvées : ${participants.length} / ${expectedCount}`);
 
     const quotaReached = expectedCount > 0 && participants.length >= expectedCount;
-    const forcedRun = eventName === 'schedule' || eventName === 'workflow_dispatch';
+    const forcedRun = eventName === 'workflow_dispatch';
 
     if (!quotaReached && !forcedRun) {
-        console.log('En attente des participants restants.');
+        console.log('Quota non atteint. En attente des participants restants.');
         return;
     }
 
@@ -57,7 +59,7 @@ async function run() {
         return;
     }
 
-    // Dérangement aléatoire cryptographique (Fisher-Yates + vérification sans point fixe)
+    // Dérangement aléatoire cryptographique (personne ne se tire soi-même)
     let targets = [...participants];
     let valid = false;
     while (!valid) {
@@ -68,7 +70,7 @@ async function run() {
         valid = participants.every((p, idx) => p.nom !== targets[idx].nom);
     }
 
-    // Chiffrement asymétrique individuel
+    // Chiffrement asymétrique ECDH P-256 + AES-GCM pour chaque participant
     const { subtle } = crypto.webcrypto;
     const output = {};
 
@@ -113,22 +115,13 @@ async function run() {
 
     fs.writeFileSync('tirage.json', JSON.stringify(output, null, 2));
 
-    // Fermeture des tickets d'inscription
-    for (const p of participants) {
-        await fetch(`https://api.github.com/repos/${repo}/issues/${p.issueNumber}`, {
-            method: 'PATCH',
-            headers,
-            body: JSON.stringify({ state: 'closed' })
-        });
-    }
-
     if (process.env.GITHUB_OUTPUT) {
         fs.appendFileSync(process.env.GITHUB_OUTPUT, 'ready=true\n');
     }
-    console.log('Tirage généré et tickets fermés.');
+    console.log('Tirage généré avec succès.');
 }
 
 run().catch((err) => {
     console.error(err);
     process.exit(1);
-}); 
+});

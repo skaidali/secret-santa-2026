@@ -1,23 +1,19 @@
 name: Secret Santa Auto-Draw
 
 on:
-  issues:
-    types: [opened]
   schedule:
-    # Date limite automatique (ex: 5 décembre à 20h00 UTC)
-    - cron: '0 20 5 12 *'
-  workflow_dispatch:
+    # Vérifie toutes les 30 minutes si le nombre de participants est atteint
+    - cron: '*/30 * * * *'
+  workflow_dispatch: # Permet aussi de lancer le tirage manuellement à tout moment
 
 permissions:
   contents: write
-  issues: write
 
 jobs:
   draw:
+    # Ne lance pas le robot inutilement si le tirage est déjà publié
+    if: hashFiles('tirage.json') == ''
     runs-on: ubuntu-latest
-    concurrency:
-      group: secret-santa-draw
-      cancel-in-progress: false
 
     steps:
       - name: Checkout repository
@@ -28,11 +24,10 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Run draw script
+      - name: Check registrations and run draw
         id: draw
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NB_PARTICIPANTS: "6" # Nombre exact de participants attendus
+          NB_PARTICIPANTS: "6" # ⚠️ Indique ici le nombre exact de participants attendus
         run: node scripts/draw.js
 
       - name: Commit and push tirage.json
