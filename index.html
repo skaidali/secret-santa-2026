@@ -22,11 +22,10 @@
     <h1>🎄 Secret Santa 🎄</h1>
     
     <div id="formulaire">
-        <p>Entre ton identifiant étudiant pour recevoir ton lien sur <b>Zimbra</b> :</p>
+        <p>Adresse mail pour recevoir le lien sur <b>Zimbra</b> :</p>
         <div class="email-box">
             <input type="text" id="identifiantInput" placeholder="prenom.nom" required>
-            <!-- ⚠️ REMPLACE LE TEXTE CI-DESSOUS PAR LE DOMAINE DE TON ÉCOLE ⚠️ -->
-            <span>@etu.mon-ecole.fr</span>
+            <span>@etu.ec-lyon.fr</span>
         </div>
         <button id="sendLinkBtn">Recevoir mon lien</button>
     </div>
@@ -110,7 +109,7 @@
             .then(() => {
                 window.localStorage.setItem('emailForSignIn', emailComplet);
                 formulaireDiv.style.display = 'none';
-                resultatDiv.innerHTML = `📩 Lien envoyé à <b>${emailComplet}</b>.<br><br>Ouvre ton <b>Zimbra</b> (regarde dans les <i>Indésirables / Junk</i>) et clique sur le lien !`;
+                resultatDiv.innerHTML = `📩 Lien envoyé à <b>${emailComplet}</b>.<br><br>Ouvre <b>Zimbra</b> (regarde dans les <i>Indésirables</i>) et clique sur le lien.`;
             })
             .catch((error) => {
                 console.error(error);
