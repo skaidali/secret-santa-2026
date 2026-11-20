@@ -1,0 +1,256 @@
+:root {
+    --bg: #F6F4EF;
+    --surface: #FFFFFF;
+    --ink: #18181B;
+    --ink-muted: #52525B;
+    --border: #D4D4D8;
+    --border-strong: #18181B;
+    --accent: #1E3A2F;       /* Vert sapin profond */
+    --accent-hover: #142820;
+    --highlight: #8B2635;    /* Bordeaux sobre */
+    --error-bg: #FEF2F2;
+    --error-text: #991B1B;
+    --font-serif: "Georgia", "Times New Roman", serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    padding: 2rem 1rem;
+}
+
+.container {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+/* En-tête éditorial */
+.site-header {
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--border-strong);
+    padding-bottom: 1.25rem;
+}
+
+.eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+    margin-bottom: 0.4rem;
+}
+
+h1 {
+    font-family: var(--font-serif);
+    font-size: 2.4rem;
+    font-weight: normal;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 0.6rem;
+}
+
+.subtitle {
+    font-size: 0.92rem;
+    color: var(--ink-muted);
+}
+
+/* Carte principale */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    padding: 1.75rem;
+}
+
+.card-header {
+    margin-bottom: 1.5rem;
+}
+
+.card-header h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.card-header p {
+    font-size: 0.88rem;
+    color: var(--ink-muted);
+}
+
+/* Formulaires */
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+label {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+input, select {
+    width: 100%;
+    padding: 0.7rem 0.85rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    transition: border-color 0.15s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--border-strong);
+}
+
+.btn {
+    display: inline-block;
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    color: #FFFFFF;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn-github {
+    background-color: var(--ink);
+    color: #FFFFFF;
+    margin-top: 0.75rem;
+}
+
+.btn-github:hover {
+    background-color: #3F3F46;
+}
+
+/* Zone d'action post-génération */
+.action-box {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    font-size: 0.88rem;
+}
+
+/* Liste des inscrits */
+.roster {
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+}
+
+.roster-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-muted);
+    margin-bottom: 0.75rem;
+}
+
+.mono {
+    font-family: var(--font-mono);
+}
+
+.roster-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.roster-list li {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.65rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+}
+
+.roster-list li.muted {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--ink-muted);
+}
+
+/* Résultat et erreurs */
+.alert-error {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: var(--error-bg);
+    color: var(--error-text);
+    border: 1px solid #FECACA;
+    font-size: 0.88rem;
+}
+
+.reveal-box {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    border: 2px solid var(--highlight);
+    background: var(--bg);
+    text-align: center;
+}
+
+.reveal-label {
+    display: block;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-muted);
+    margin-bottom: 0.4rem;
+}
+
+.reveal-target {
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    color: var(--highlight);
+}
+
+/* Pied de page */
+.site-footer {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+}
+
+.site-footer a {
+    color: var(--ink-muted);
+    text-decoration: underline;
+}

@@ -1,0 +1,45 @@
+name: Secret Santa Auto-Draw
+
+on:
+  issues:
+    types: [opened]
+  schedule:
+    # Date limite automatique (ex: 5 décembre à 20h00 UTC)
+    - cron: '0 20 5 12 *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  draw:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: secret-santa-draw
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run draw script
+        id: draw
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NB_PARTICIPANTS: "6" # Nombre exact de participants attendus
+        run: node scripts/draw.js
+
+      - name: Commit and push tirage.json
+        if: steps.draw.outputs.ready == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tirage.json
+          git commit -m "chore: publish encrypted draw"
+          git push
