@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Santa 🎅</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f9; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; max-width: 400px; width: 90%; }
+        h1 { color: #d32f2f; margin-top: 0; }
+        .email-box { display: flex; align-items: center; border: 1px solid #ccc; border-radius: 6px; overflow: hidden; margin-bottom: 15px; }
+        .email-box input { border: none; padding: 12px; font-size: 16px; width: 55%; outline: none; text-align: right; }
+        .email-box span { background: #eee; padding: 12px 10px; font-size: 14px; color: #555; width: 45%; text-align: left; border-left: 1px solid #ccc; }
+        button { padding: 12px; font-size: 16px; width: 100%; background-color: #2e7d32; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #1b5e20; }
+        #resultat { margin-top: 20px; font-size: 17px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>🎄 Secret Santa 🎄</h1>
+    
+    <div id="formulaire">
+        <p>Entre ton identifiant étudiant pour recevoir ton lien sur <b>Zimbra</b> :</p>
+        <div class="email-box">
+            <input type="text" id="identifiantInput" placeholder="prenom.nom" required>
+            <!-- ⚠️ REMPLACE LE TEXTE CI-DESSOUS PAR LE DOMAINE DE TON ÉCOLE ⚠️ -->
+            <span>@etu.mon-ecole.fr</span>
+        </div>
+        <button id="sendLinkBtn">Recevoir mon lien</button>
+    </div>
+
+    <div id="resultat"></div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+    apiKey: "AIzaSyBDGC-Mealun6OANOJuIXq5dQMfigjclqg",
+    authDomain: "secret-santa-2026-493b5.firebaseapp.com",
+    projectId: "secret-santa-2026-493b5",
+    storageBucket: "secret-santa-2026-493b5.firebasestorage.app",
+    messagingSenderId: "963368594822",
+    appId: "1:963368594822:web:ada60f18ba10ca180c9007"
+};
+
+    const DOMAINE_ECOLE = "@etu.ec-lyon.fr";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const resultatDiv = document.getElementById('resultat');
+    const formulaireDiv = document.getElementById('formulaire');
+
+    async function afficherCible(email) {
+        formulaireDiv.style.display = 'none';
+        resultatDiv.innerHTML = "Recherche de ton tirage...";
+        
+        try {
+            const docRef = doc(db, "tirages", email.toLowerCase());
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const cible = docSnap.data().cible;
+                resultatDiv.innerHTML = `🎁 Tu dois offrir un cadeau à :<br><strong style="color:#d32f2f; font-size: 28px;">${cible}</strong>`;
+            } else {
+                resultatDiv.innerHTML = `❌ L'adresse <b>${email}</b> n'est pas inscrite dans ce Secret Santa.`;
+            }
+        } catch (error) {
+            resultatDiv.innerHTML = "❌ Erreur d'accès aux données.";
+        }
+    }
+
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+        formulaireDiv.style.display = 'none';
+        let email = window.localStorage.getItem('emailForSignIn');
+        
+        if (!email) {
+            const idSaisi = window.prompt(`Confirme ton identifiant (sans ${DOMAINE_ECOLE}) :`);
+            if (idSaisi) email = idSaisi.trim().toLowerCase() + DOMAINE_ECOLE;
+        }
+
+        signInWithEmailLink(auth, email, window.location.href)
+            .then((result) => {
+                window.localStorage.removeItem('emailForSignIn');
+                window.history.replaceState({}, document.title, window.location.pathname);
+                afficherCible(result.user.email);
+            })
+            .catch(() => {
+                resultatDiv.innerHTML = "❌ Lien invalide ou expiré. Recharge la page pour en demander un nouveau.";
+            });
+    }
+
+    document.getElementById('sendLinkBtn').addEventListener('click', () => {
+        let saisie = document.getElementById('identifiantInput').value.trim().toLowerCase();
+        if (!saisie) return;
+
+        const emailComplet = saisie.includes('@') ? saisie : saisie + DOMAINE_ECOLE;
+
+        const actionCodeSettings = {
+            url: window.location.href.split('?')[0],
+            handleCodeInApp: true
+        };
+
+        sendSignInLinkToEmail(auth, emailComplet, actionCodeSettings)
+            .then(() => {
+                window.localStorage.setItem('emailForSignIn', emailComplet);
+                formulaireDiv.style.display = 'none';
+                resultatDiv.innerHTML = `📩 Lien envoyé à <b>${emailComplet}</b>.<br><br>Ouvre ton <b>Zimbra</b> (regarde dans les <i>Indésirables / Junk</i>) et clique sur le lien !`;
+            })
+            .catch((error) => {
+                console.error(error);
+                resultatDiv.innerHTML = "❌ Erreur lors de l'envoi. Vérifie ton identifiant.";
+            });
+    });
+</script>
+
+</body>
+</html>
