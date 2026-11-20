@@ -1,0 +1,58 @@
+{
+  "Skander": {
+    "s": "wfD5CZiE0ymSGfaeyRpqWg==",
+    "iv": "ViU898DqpYejHlLn",
+    "priv": "/9//ItXIYl0GfUdX8rL7OBnCvWIIieOP+dsbve5HhMpd9Y2rXWl4zNtjWk5nus0EFjMpjDMkh1yFF+ahfZ34ICI39VBW7jdlcT3M7biUVB7WVatqXmoeVh18fF6S/jjK/63zx/H8lxfC8FeoUeTGEiDpMXLwyOqpzvNaShTQq8jttTTN2/Xp3QKtPjjQLUXNKgyb+u94oZAe8k7oNHXRkIjA+mHrlCbwKhStM1giKx5bR5S7WNqzbGdpmFbKGqOO8qDZfXBlo4RaI8Y6FdPdyBQaEOJXa181uFW50H0/uPtKM9E=",
+    "ephemPub": "BDKNTiQqYfG9hF0s5gF5efVnz0a0FTxmO97owTHj/bZypQMRAd6EAphuqjvuqRBHWo8Qssrx7Mn0298YErzSW04=",
+    "cibleIv": "qNNY2aK34scA9304",
+    "cibleChiffree": "p9hEgOJONAI7kW/p3FOzGVmNVBme6GI="
+  },
+  "Camille": {
+    "s": "+4nedSDrYXadGr4/TvWJdQ==",
+    "iv": "WTKlYDvsoUaWYDYA",
+    "priv": "G0RGWJcrRYKwTJa4JNjgwk2eswYZCl13MRevO1veU6W6ZsKVkWWbIeOdb0DmlSm+9GZ36XiFkeoQQbZzdfFsjPCTV65Bs0vL5AMaSSJlw9VSsrFD2mqjnmfXFVWkwcQ/iPlORw0Z+sthPabotlU4UKJFpG6Ry39E+S5aF/Pwi+nfLKpKxJPWtx+aoFDWx66lF1bDyBpqM0OEcKe8CTVqY/OyZq3maKVP/nshdZO4dPduTq89e1E0hVjOEW3fSGRt1OsceNqv57ufMjWEf9sC7s0xmJqkzhESCf+UwI90hgIcyA0=",
+    "ephemPub": "BG5R+XDv09LxcQQUrc6e8u51lGPrK+0TyuCHV7NNr0mLwt0LLu5kmz0jYSL98rDhF7JRP8E+G1dojooz0Bslpeg=",
+    "cibleIv": "ou3nXaTOZdLCQCah",
+    "cibleChiffree": "MtExI2ZtXj8BXhjHZIRo4jtjmgbl6g=="
+  },
+  "Alfonso": {
+    "s": "/RMqMAOnwnLIvOM3tzz1RQ==",
+    "iv": "qspDyAYiYarnBXxV",
+    "priv": "9fLYoPGicuOSbY6Svuei1LHeKS2hIsKIpwQ/gu60dNTEaXQP9oXj99wHh3MxFPoJAItAZ81rG1Ie5dXCaUX4DysfWmkBVoXGlb7DgSPFg0vblLn6uFuGpCN79FaL2j30/49WKgxYgK36cQPzTlQexUERvWd9860Ctr3Awqz2HxkZKf6DHA40q+r7MDHlxwBKMhIduWNfEJzunFChF7+HcsLpbtbMPEvksl/JLpeVZaD85ylatkc+CfMBQDBCRu9I3WyUkQoGUYpNaZUXSGwJ8b/A+xUxwbz42Mjn6vma30NFRiE=",
+    "ephemPub": "BOM0rrqVVTZO+6D+4786Z+H6n3ZpktNiRbEyvi6bai5Ree4Jw/yVuNUc85bvyuw2QoVetxHk5VxNOyZhZ6utUhQ=",
+    "cibleIv": "3coZSm62Vn5LzSzw",
+    "cibleChiffree": "k+n5rwQXpF5PLZWB8oDQjrwrwJ6FbQ=="
+  },
+  "Edouardo": {
+    "s": "aHU091pY9z7AIZAnTCXwQA==",
+    "iv": "BOeCsVRmF96lgmzL",
+    "priv": "i4d+h8qUc2UKVVbBetFAbetNcZA98vPofh9CXqSKcc+YUWpu1xoHMVIG2wistwNRVDEIo9rIMvmJJa1ETPDSb6bfNXXbmrJPodZslVPzWJSJazjjWZgG5xKofMrGUd21eXB0d4LeTILEhSuQobgzlHv6PRQNUnZ9vYWmfUJq5IzUip4CuFILQ8xmPhVs4V9XngsO+gMIdULNstzE4D93+iseaWwQqv0mr2yR1qx1V1jCnp4K/TdopSMsxpviV6Hm1R36C0VY6rMT4qia82d35cTODTMKaUWVTRdXISNBSOI/4iw=",
+    "ephemPub": "BB51GKmw2ww11sxNQdVjYE49J1zOxsZL+SfyVBNs3njrkPveCYYvw/aURnbPRAqHnLD6/xGAtxIYljZuqDONSTA=",
+    "cibleIv": "HMh3Q9g5dVggHphr",
+    "cibleChiffree": "6gACnRWum+YH0TVcIshbQx0UXs3hBo0="
+  },
+  "Ziplet": {
+    "s": "ctsKeQ4V1CwovMM32ajUng==",
+    "iv": "xj3gtonZ8+iF/hSx",
+    "priv": "l6S6qZIrm4m/6DsgWgwBXtccww0iNuGsOJgRpgnqVmI+3lSXAwQNVXAJjwkt8ueyMZNG+GZR7SAu/rMCyLmWR9oKIehmHOCgJy058rXvFw3x3QIix9CVYFt+J+r7ERQjfBJcr7SlM6HcArQ6hdGOtFL+bhnnKI1IjtK78W8EnbdoOCdwSiLiYU+JXqBDr8Xc+6+Bg8ngYDewSm4k+Ka8go9z0tjFoCkoyCMTiARfXGUnoMhtCaQ0Tq/47Bq2RpVhYhSwCrxa6eAt9amOehO1g4cEjjhvVYQ3o++XZTBgbz923ck=",
+    "ephemPub": "BCUr+tLgOuOYmg+esWybDY0eCHpEVahROEf0z/wK49O4iV4RgdNjua+LFGUbhCm5dCgHieeF+0eCtY2zQyCNMQg=",
+    "cibleIv": "mpnmOwbEt+rFh2fT",
+    "cibleChiffree": "e9h3tKR5PvpFa4uZoL5q6WSUgVuxqRTS"
+  },
+  "Mimi": {
+    "s": "ntRf4XY+kULnOD/ig0oWzg==",
+    "iv": "8YmkZmaPtFAGqikp",
+    "priv": "rif1uwsPhUrMKgqnYKaZoh1DqsHFnlVCPz99qfTf0nSZuvO+8L2SOmzeZJN7FBzftqaKx/qZ3bsm/Pc7aDmYNpOaOLNMwLYayYA140HZD7yuNnQtTMFR48HxSeQZBdjW1Mfg7WnBYSD1I1JkBB1TWW9Ax/bGnVPg38H4E6rYLnjuXGwhrTnMo9P6aHNNZAUIyGJH7pPcPRtAIlhb3AhOiAWVlGkPZYCVurfQI56y5lV/HOyMRGMSafzjmjhRnYcQp7FINca+B3kpiHHlurYWqh470Jn/hEE94rInlNJ93HOnViw=",
+    "ephemPub": "BACyMvTmo79HrXx9hdb89wCorZ4zNFYYPXT9or4x5TpOJDQjnNJ4wvnX9Pbr0+HS4rHUzy7KnusT4BymaVdGgyA=",
+    "cibleIv": "K2PfcA5tx2K0g1W8",
+    "cibleChiffree": "E0PpRObu6w5FJfYJrsr8y+K2zSfwevc="
+  },
+  "Anyway": {
+    "s": "+2H1kShC8Tpj4ISMpEvu8g==",
+    "iv": "K9F5jWENhL+1voNI",
+    "priv": "ncSDpqegRbbT+6sIfucYkaEHeS446QrANEWxZGBkGIfxv6M2ZsKNUNgA1Bocxz1Be1jLZphOCOVVcjaFSJP2/OI2co8ouAu9XCa2ayJC6rT2ePaAdVKV0JSWiZN857Vx7VV6ufyRWc2QJQlDGQEjAkxEsExJrYCR+AZXFef5MyAqZJhV+QvtLnhC0ST3zPmMMrXblDeHWJozO3RN4jufS0YOO9niYx2Ko6G7RTIva1FMYVPymMUkVCxv6xJ3LlgDPikREvKTZeZUUhlW1Okobu0WM5Onb8aSVJPD6UvO/r5ndeM=",
+    "ephemPub": "BLN6cBBFV46Dx3gGNEOPctS+oP2AhgltGpuL7BLJXdeQEHOnGsxkbrbsDv8708NMvVTvKTSpy4RVCmEN8FJr74U=",
+    "cibleIv": "amixaA55pMifPSVY",
+    "cibleChiffree": "Cg/yudxMcXb9FErCViT5SMCYnwQ="
+  }
+}
