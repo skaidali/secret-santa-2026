@@ -23,6 +23,7 @@ const toB64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
 const fromB64 = (str) => Uint8Array.from(atob(str), (c) => c.charCodeAt(0));
 
 async function init() {
+    initTheme();
     document.getElementById('repo-link').href = REPO_URL;
 
     try {
@@ -245,6 +246,32 @@ async function handleLogin(event) {
     } catch {
         errorBox.textContent = 'Mot de passe incorrect. Vérifiez votre saisie.';
         errorBox.hidden = false;
+    }
+}
+
+function initTheme() {
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (!toggleBtn) return;
+
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+
+    applyTheme(initialTheme);
+
+    toggleBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+        localStorage.setItem('theme', next);
+    });
+}
+
+function applyTheme(theme) {
+    const toggleBtn = document.getElementById('theme-toggle');
+    document.documentElement.setAttribute('data-theme', theme);
+    if (toggleBtn) {
+        toggleBtn.textContent = theme === 'dark' ? 'Mode clair' : 'Mode sombre';
     }
 }
 

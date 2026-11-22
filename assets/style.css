@@ -15,6 +15,20 @@
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
+[data-theme="dark"] {
+    --bg: #121214;
+    --surface: #1C1C1F;
+    --ink: #F4F4F5;
+    --ink-muted: #A1A1AA;
+    --border: #3F3F46;
+    --border-strong: #E4E4E7;
+    --accent: #2D5A47;
+    --accent-hover: #3B735B;
+    --highlight: #E16B7A;
+    --error-bg: #2C1518;
+    --error-text: #FCA5A5;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -253,4 +267,18 @@ input:focus, select:focus {
 .site-footer a {
     color: var(--ink-muted);
     text-decoration: underline;
+}
+
+[data-theme="dark"] {
+    --bg: #121214;
+    --surface: #1C1C1F;
+    --ink: #F4F4F5;
+    --ink-muted: #A1A1AA;
+    --border: #3F3F46;
+    --border-strong: #E4E4E7;
+    --accent: #2D5A47;
+    --accent-hover: #3B735B;
+    --highlight: #E16B7A;
+    --error-bg: #2C1518;
+    --error-text: #FCA5A5;
 }
