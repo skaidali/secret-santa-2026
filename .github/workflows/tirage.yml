@@ -9,24 +9,37 @@ permissions:
   contents: write
 
 jobs:
-  draw:
+  check:
     runs-on: ubuntu-latest
-
+    outputs:
+      tirage_existe: ${{ steps.check_file.outputs.exists }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            tirage.json
+      - id: check_file
+        run: |
+          if [ -f "tirage.json" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+  draw:
+    needs: check
+    if: needs.check.outputs.tirage_existe == 'false'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      - name: Run draw
-        id: draw
+      - id: draw
+        env:
+          NB_PARTICIPANTS: "6"
         run: node scripts/draw.js
-
-      - name: Commit and push tirage.json
-        if: steps.draw.outputs.ready == 'true'
+      - if: steps.draw.outputs.ready == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
