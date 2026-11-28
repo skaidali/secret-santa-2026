@@ -2,6 +2,10 @@
 
 Application web statique et open source permettant d'organiser un Secret Santa sans serveur tiers, sans base de données et sans création de compte pour les participants.
 
+## Accès à la plateforme
+
+La version web est accessible à l’adresse https://skaidali.github.io/secret-santa-2026/
+
 ## Architecture et confidentialité
 
 1. **Chiffrement côté client (`Web Crypto API`) :** Lors de son inscription, chaque participant choisit un mot de passe personnel. Le navigateur génère une paire de clés asymétriques (`ECDH P-256`), chiffre la clé privée localement (`PBKDF2` + `AES-GCM`), et transmet uniquement le jeton public sur un canal éphémère open source (`ntfy.sh`) isolé par le nom du dépôt.
